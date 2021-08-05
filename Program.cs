@@ -21,8 +21,6 @@ namespace Gamerpg
         private static float jumpTime = 0.15f;
         private static float timeBetweenJumps = 0.2f;
         private static float movementDist = 5;
-        
-
 
         public static void Main(string[] args)
         {
@@ -61,8 +59,6 @@ namespace Gamerpg
         private static void PlayerLoop() {
             Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100, Color.BROWN);
             player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100);
-            //Rectangle screen = new Rectangle((int)Raylib.GetScreenWidth(), (int)Raylib.GetScreenHeight(), 0, 0);
-            //Raylib.GetCollisionRec(screen, player);
 
             if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE)) {
                 isJumping = true;
@@ -128,10 +124,6 @@ namespace Gamerpg
             }
 
             //workout the screen stuff
-            StopOffScreen();
-        }
-
-        private static void StopOffScreen() { 
             if(playerPosition.X > Raylib.GetScreenWidth()){
                 playerPosition.X -= Raylib.GetScreenWidth();
             }
