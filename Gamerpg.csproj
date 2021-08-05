@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\netcoreapp3.1\Raylib-cs.dll" />
+    <None Include="bin\Debug\netcoreapp3.1\raylib.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Raylib-cs">
       <HintPath>..\Raylib-cs\Raylib-cs\bin\Debug\netstandard2.1\Raylib-cs.dll</HintPath>
     </Reference>
