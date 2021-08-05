@@ -16,16 +16,12 @@ namespace Gamerpg
         private static bool isMoving, isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
         private static bool isUsing = false;
 
-        private static float gravity = 10;
         private static float jumpDist = 10;
-        private static float jumpTime = 0.15f;
-        private static float timeBetweenJumps = 0.2f;
         private static float movementDist = 5;
 
         public static void Main(string[] args)
         {
             Raylib.InitWindow(800, 600, "BlockMan Adventures");
-
             //load player texture
             //Raylib.LoadTexture("");
 
@@ -33,33 +29,23 @@ namespace Gamerpg
             {
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
-
                 Raylib.DrawFPS(10, 10);
+                Raylib.DrawText("Yeaaaaaaah boiiiii", 30, 50, 40, Color.BLACK);
 
-                Raylib.DrawText("Yeaaaaaaah boi", 30, 50, 40, Color.BLACK);
-
-                PlayerLoop();
-                UpdateCamera();
+                UpdatePlayer();
 
                 Raylib.EndMode2D();
-
                 Raylib.EndDrawing();
             }
 
             Raylib.CloseWindow();
         }
 
-        private static void UpdateCamera() { 
-            camera.target = playerPosition;
-            camera.offset = new Vector2(1200 / 2.0f, 7.0f / 2.0f);
-            camera.rotation = 0.0f;
-            camera.zoom = 1.0f;
-        }
-
-        private static void PlayerLoop() {
+        private static void UpdatePlayer() {
             Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100, Color.BROWN);
             player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100);
 
+            //NOT WORKING
             if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE)) {
                 isJumping = true;
                 isMoving = true;
@@ -68,7 +54,7 @@ namespace Gamerpg
                 playerPosition.Y -= jumpDist;
             }
 
-            //WORKING CODE
+            //WORKING
             //movement of player
             if (Raylib.IsKeyDown(KeyboardKey.KEY_UP) || Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) {
                 isMovingUp = true;
@@ -123,7 +109,7 @@ namespace Gamerpg
                 isMoving = false;
             }
 
-            //workout the screen stuff
+            //NOT WORKING
             if(playerPosition.X > Raylib.GetScreenWidth()){
                 playerPosition.X -= Raylib.GetScreenWidth();
             }
