@@ -31,12 +31,13 @@ namespace Gamerpg
         private static Sound mainTheme;
         private static float volumeMain = 1;
 
-        private static int screenUpperLimit = 600;
+        private static int screenUpperLimit = 40;
 
         public static void Main(string[] args)
         {
-
+            Raylib.SetTargetFPS(120);
             Raylib.InitWindow(800, 600, "Woodcutter Adventures");
+            
             //load player texture
             playerTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Main character sprites\Woodcutter\Woodcutter.png");
             playerTex.height = 150;
@@ -58,8 +59,11 @@ namespace Gamerpg
                 gameRunning = true;
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
+                
                 Raylib.DrawFPS(10, 10);
                 Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 20, Color.BLACK);
+                Raylib.DrawText("Press N to pause the music, M to resume and B to restart the music.", 30, 70, 20, Color.BLACK);
+                Raylib.DrawText("Use the directional keys to move the character. ", 30, 90, 20, Color.BLACK);
 
                 UpdateBackground();
                 UpdateMusic();
@@ -96,6 +100,10 @@ namespace Gamerpg
             {
                 Raylib.ResumeSound(mainTheme);
             }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_B) || Raylib.IsKeyDown(KeyboardKey.KEY_B) && Raylib.IsSoundPlaying(mainTheme))
+            {
+                Raylib.PlaySound(mainTheme);
+            }
 
         }
 
@@ -106,22 +114,22 @@ namespace Gamerpg
             Raylib.DrawTextureRec(playerTex, player, playerPosition, Color.WHITE);
             
             //player collision detection
-            if ((player.x + player.width) >= Raylib.GetScreenWidth())
+            if ((playerPosition.X + playerTex.width) >= Raylib.GetScreenWidth())
             {
-                player.x = Raylib.GetScreenWidth() - player.width;
+                playerPosition.X = Raylib.GetScreenWidth() - playerTex.width;
             }
-            else if (player.x <= 0)
+            else if (playerPosition.X <= 0)
             {
-                player.x = 0;
+                playerPosition.X = 0;
             }
 
-            if ((player.y + player.height) >= Raylib.GetScreenHeight())
+            if ((playerPosition.Y + playerTex.height) >= Raylib.GetScreenHeight())
             {
-                player.y = Raylib.GetScreenHeight() - player.height;
+                playerPosition.Y = Raylib.GetScreenHeight() - playerTex.height;
             }
-            else if (player.y <= screenUpperLimit)
+            else if (playerPosition.Y <= screenUpperLimit)
             {
-                player.y = screenUpperLimit;
+                playerPosition.Y = screenUpperLimit;
             }
 
             //figure out the jump once algorithm (hasjumped algorithm)
