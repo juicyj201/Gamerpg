@@ -27,7 +27,7 @@ namespace Gamerpg
         private static float movementDist = 3;
 
         private static Music mainTheme;
-        private static bool musicIsPlaying = false;
+        private static float volumeMain = 1;
 
         public static void Main(string[] args)
         {
@@ -41,7 +41,8 @@ namespace Gamerpg
             screenBack.height = 600;
             screenBack.width = 800;
 
-            mainTheme = Raylib.LoadMusicStream(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main (OGG).ogg");
+            mainTheme = Raylib.LoadMusicStream(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main.mp3");
+            Raylib.SetMusicVolume(mainTheme, volumeMain);
 
             while (!Raylib.WindowShouldClose())
             {
@@ -51,13 +52,14 @@ namespace Gamerpg
                 Raylib.DrawFPS(10, 10);
                 Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 30, Color.BLACK);
 
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) && musicIsPlaying == false) {
+                //music
+                Raylib.UpdateMusicStream(mainTheme);
+
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) || Raylib.IsKeyDown(KeyboardKey.KEY_M)) {
                     Raylib.PlayMusicStream(mainTheme);
-                    musicIsPlaying = true;
                 }
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) && musicIsPlaying == true) {
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N)) {
                     Raylib.StopMusicStream(mainTheme);
-                    musicIsPlaying = false;
                 }
 
                 UpdatePlayer();
@@ -69,6 +71,9 @@ namespace Gamerpg
                 Raylib.EndMode2D();
                 Raylib.EndDrawing();
             }
+
+            Raylib.UnloadMusicStream(mainTheme);
+            Raylib.CloseAudioDevice();
 
             gameRunning = false;
             Raylib.CloseWindow();
