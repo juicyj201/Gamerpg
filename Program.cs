@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using System.Numerics;
+using System.Resources;
 
 namespace Gamerpg
 {
@@ -26,23 +27,29 @@ namespace Gamerpg
         private static float jumpDist = 5;
         private static float movementDist = 3;
 
-        private static Music mainTheme;
+        private static Sound mainTheme;
         private static float volumeMain = 1;
 
         public static void Main(string[] args)
         {
+            
+
             Raylib.InitWindow(800, 600, "Woodcutter Adventures");
             //load player texture
             playerTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Main character sprites\Woodcutter\Woodcutter.png");
             playerTex.height = 150;
             playerTex.width = 150;
 
+            //load screen background
             screenBack = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Backgrounds\Battleground1\Bright\Battleground1.png");
             screenBack.height = 600;
             screenBack.width = 800;
 
-            mainTheme = Raylib.LoadMusicStream(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main.mp3");
-            Raylib.SetMusicVolume(mainTheme, volumeMain);
+            //load music
+            Raylib.InitAudioDevice();
+            mainTheme = Raylib.LoadSound(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main.mp3");
+            Raylib.SetSoundVolume(mainTheme, volumeMain);
+            Raylib.PlaySound(mainTheme);
 
             while (!Raylib.WindowShouldClose())
             {
@@ -50,19 +57,11 @@ namespace Gamerpg
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
                 Raylib.DrawFPS(10, 10);
-                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 30, Color.BLACK);
+                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 20, Color.BLACK);
 
-                //music
-                Raylib.UpdateMusicStream(mainTheme);
-
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) || Raylib.IsKeyDown(KeyboardKey.KEY_M)) {
-                    Raylib.PlayMusicStream(mainTheme);
-                }
-                if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N)) {
-                    Raylib.StopMusicStream(mainTheme);
-                }
-
+                UpdateMusic();
                 UpdatePlayer();
+
                 if (gameRunning == true)
                 {
                     playerPosition.Y += gravityAmount;
@@ -72,16 +71,22 @@ namespace Gamerpg
                 Raylib.EndDrawing();
             }
 
-            Raylib.UnloadMusicStream(mainTheme);
+            Raylib.UnloadSound(mainTheme);
             Raylib.CloseAudioDevice();
 
             gameRunning = false;
             Raylib.CloseWindow();
         }
 
+        private static void UpdateMusic() { 
+            //Raylib.UpdateSound(mainTheme);
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N) && Raylib.IsSoundPlaying(mainTheme)) {
+                    Raylib.StopSound(mainTheme);
+                }
+        }
+
         private static void UpdatePlayer() {
             Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
-            //Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150, Color.BROWN);
             player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
 
             //figure out the jump once algorithm (hasjumped algorithm)
