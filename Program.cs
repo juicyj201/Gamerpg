@@ -26,6 +26,9 @@ namespace Gamerpg
         private static float jumpDist = 5;
         private static float movementDist = 3;
 
+        private static Music mainTheme;
+        private static bool musicIsPlaying = false;
+
         public static void Main(string[] args)
         {
             Raylib.InitWindow(800, 600, "Woodcutter Adventures");
@@ -38,6 +41,8 @@ namespace Gamerpg
             screenBack.height = 600;
             screenBack.width = 800;
 
+            mainTheme = Raylib.LoadMusicStream(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main (OGG).ogg");
+
             while (!Raylib.WindowShouldClose())
             {
                 gameRunning = true;
@@ -45,6 +50,15 @@ namespace Gamerpg
                 Raylib.ClearBackground(Color.WHITE);
                 Raylib.DrawFPS(10, 10);
                 Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 30, Color.BLACK);
+
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) && musicIsPlaying == false) {
+                    Raylib.PlayMusicStream(mainTheme);
+                    musicIsPlaying = true;
+                }
+                if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) && musicIsPlaying == true) {
+                    Raylib.StopMusicStream(mainTheme);
+                    musicIsPlaying = false;
+                }
 
                 UpdatePlayer();
                 if (gameRunning == true)
