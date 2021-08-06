@@ -44,7 +44,7 @@ namespace Gamerpg
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
                 Raylib.DrawFPS(10, 10);
-                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 40, Color.BLACK);
+                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 30, Color.BLACK);
 
                 UpdatePlayer();
                 if (gameRunning == true)
@@ -64,8 +64,6 @@ namespace Gamerpg
             Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
             //Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150, Color.BROWN);
             player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
-            
-            UpdateScreen();
 
             //figure out the jump once algorithm (hasjumped algorithm)
             //WORKING
@@ -147,12 +145,6 @@ namespace Gamerpg
                 playerPosition.Y -= Raylib.GetScreenHeight();
             }
             **/
-        }
-
-        private static void UpdateScreen() {
-            Raylib.DrawLine(0, 0, 800, 0, Color.BLACK);
-
-            
         }
     }
 }
