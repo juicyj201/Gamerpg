@@ -10,9 +10,11 @@ namespace Gamerpg
         private static Camera2D camera;
 
         //play
-        private static Rectangle player;
+        //private static Rectangle player;
         private static Vector2 playerPosition = new Vector2(400, 400);
         private static Texture2D playerTex;
+        private static float playerHeight = 150;
+        private static float playerWidth = 150;
 
         private static Texture2D screenBackTex;
         private static Rectangle screenBack;
@@ -22,18 +24,17 @@ namespace Gamerpg
         private static bool isMoving, isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
         private static bool isUsing = false;
         private static bool gameRunning = false;
-        private static float playerRotation = 0;
         private static float gravityAmount = 1;
-
         private static float jumpDist = 5;
         private static float movementDist = 3;
 
         private static Sound mainTheme;
         private static float volumeMain = 1;
 
+        private static int screenUpperLimit = 600;
+
         public static void Main(string[] args)
         {
-            
 
             Raylib.InitWindow(800, 600, "Woodcutter Adventures");
             //load player texture
@@ -75,6 +76,7 @@ namespace Gamerpg
 
             Raylib.UnloadSound(mainTheme);
             Raylib.CloseAudioDevice();
+            Raylib.UnloadTexture(playerTex);
 
             gameRunning = false;
             Raylib.CloseWindow();
@@ -88,7 +90,7 @@ namespace Gamerpg
         private static void UpdateMusic() { 
             //Raylib.UpdateSound(mainTheme);
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N) && Raylib.IsSoundPlaying(mainTheme)) {
-                    Raylib.PauseSound(mainTheme);
+                Raylib.PauseSound(mainTheme);
             }
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) || Raylib.IsKeyDown(KeyboardKey.KEY_M) && Raylib.IsSoundPlaying(mainTheme))
             {
@@ -98,8 +100,29 @@ namespace Gamerpg
         }
 
         private static void UpdatePlayer() {
-            Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
-            player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
+            //Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
+            //player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
+            Rectangle player = new Rectangle(0.0f, 0.0f, playerTex.width, playerTex.height);
+            Raylib.DrawTextureRec(playerTex, player, playerPosition, Color.WHITE);
+            
+            //player collision detection
+            if ((player.x + player.width) >= Raylib.GetScreenWidth())
+            {
+                player.x = Raylib.GetScreenWidth() - player.width;
+            }
+            else if (player.x <= 0)
+            {
+                player.x = 0;
+            }
+
+            if ((player.y + player.height) >= Raylib.GetScreenHeight())
+            {
+                player.y = Raylib.GetScreenHeight() - player.height;
+            }
+            else if (player.y <= screenUpperLimit)
+            {
+                player.y = screenUpperLimit;
+            }
 
             //figure out the jump once algorithm (hasjumped algorithm)
             //WORKING
