@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Raylib-cs">
       <HintPath>..\Raylib-cs\Raylib-cs\bin\Debug\netstandard2.1\Raylib-cs.dll</HintPath>
     </Reference>
