@@ -14,7 +14,8 @@ namespace Gamerpg
         private static Vector2 playerPosition = new Vector2(400, 400);
         private static Texture2D playerTex;
 
-        private static Texture2D screenBack;
+        private static Texture2D screenBackTex;
+        private static Rectangle screenBack;
 
         private static bool isJumping = false;
         private static bool hasJumped = false;
@@ -41,9 +42,9 @@ namespace Gamerpg
             playerTex.width = 150;
 
             //load screen background
-            screenBack = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Backgrounds\Battleground1\Bright\Battleground1.png");
-            screenBack.height = 600;
-            screenBack.width = 800;
+            screenBackTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Backgrounds\Battleground1\Bright\Battleground1.png");
+            screenBackTex.height = 600;
+            screenBackTex.width = 800;
 
             //load music
             Raylib.InitAudioDevice();
@@ -59,6 +60,7 @@ namespace Gamerpg
                 Raylib.DrawFPS(10, 10);
                 Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 20, Color.BLACK);
 
+                UpdateBackground();
                 UpdateMusic();
                 UpdatePlayer();
 
@@ -78,11 +80,21 @@ namespace Gamerpg
             Raylib.CloseWindow();
         }
 
+        private static void UpdateBackground() {
+            Raylib.DrawTexture(screenBackTex, screenBackTex.width, screenBackTex.height, Color.BLANK);
+
+        }
+
         private static void UpdateMusic() { 
             //Raylib.UpdateSound(mainTheme);
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N) && Raylib.IsSoundPlaying(mainTheme)) {
-                    Raylib.StopSound(mainTheme);
-                }
+                    Raylib.PauseSound(mainTheme);
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) || Raylib.IsKeyDown(KeyboardKey.KEY_M) && Raylib.IsSoundPlaying(mainTheme))
+            {
+                Raylib.ResumeSound(mainTheme);
+            }
+
         }
 
         private static void UpdatePlayer() {
