@@ -12,6 +12,9 @@ namespace Gamerpg
         private static Rectangle player;
         private static Vector2 playerPosition = new Vector2(400, 400);
         private static Texture2D playerTex;
+
+        private static Texture2D screenBack;
+
         private static bool isJumping = false;
         private static bool hasJumped = false;
         private static bool isMoving, isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
@@ -28,8 +31,12 @@ namespace Gamerpg
             Raylib.InitWindow(800, 600, "Woodcutter Adventures");
             //load player texture
             playerTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Main character sprites\Woodcutter\Woodcutter.png");
-            playerTex.height = 60;
-            playerTex.width = 60;
+            playerTex.height = 150;
+            playerTex.width = 150;
+
+            screenBack = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Backgrounds\Battleground1\Bright\Battleground1.png");
+            screenBack.height = 600;
+            screenBack.width = 800;
 
             while (!Raylib.WindowShouldClose())
             {
@@ -55,8 +62,10 @@ namespace Gamerpg
 
         private static void UpdatePlayer() {
             Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
-            //Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100, Color.BROWN);
-            player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 100, 100); //player collision rectangle
+            //Raylib.DrawRectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150, Color.BROWN);
+            player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
+            
+            UpdateScreen();
 
             //figure out the jump once algorithm (hasjumped algorithm)
             //WORKING
@@ -138,6 +147,12 @@ namespace Gamerpg
                 playerPosition.Y -= Raylib.GetScreenHeight();
             }
             **/
+        }
+
+        private static void UpdateScreen() {
+            Raylib.DrawLine(0, 0, 800, 0, Color.BLACK);
+
+            
         }
     }
 }
