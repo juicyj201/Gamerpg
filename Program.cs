@@ -17,42 +17,45 @@ namespace Gamerpg
         private static float playerWidth = 150;
 
         private static Texture2D screenBackTex;
-        private static Rectangle screenBack;
+        //private static Rectangle screenBack;
+        private static float scrollBack = 0.0f; 
 
         private static bool isJumping = false;
         private static bool hasJumped = false;
         private static bool isMoving, isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
         private static bool isUsing = false;
         private static bool gameRunning = false;
-        private static float gravityAmount = 1;
-        private static float jumpDist = 5;
-        private static float movementDist = 3;
+        private static float gravityAmount = 3;
+        private static float jumpDist = 10;
+        private static float movementDist = 5;
 
         private static Sound mainTheme;
+        private static Sound elfTheme;
         private static float volumeMain = 1;
 
         private static int screenUpperLimit = 40;
 
         public static void Main(string[] args)
         {
-            Raylib.SetTargetFPS(120);
-            Raylib.InitWindow(800, 600, "Woodcutter Adventures");
+            Raylib.SetTargetFPS(300);
+            Raylib.InitWindow(1200, 800, "Woodcutter Adventures");
             
             //load player texture
             playerTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Main character sprites\Woodcutter\Woodcutter.png");
-            playerTex.height = 150;
-            playerTex.width = 150;
+            playerTex.height = 200;
+            playerTex.width = 200;
 
             //load screen background
-            screenBackTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Backgrounds\Battleground1\Bright\Battleground1.png");
-            screenBackTex.height = 600;
-            screenBackTex.width = 800;
+            screenBackTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Backgrounds\Battleground1\Pale\Battleground1.png");
+            screenBackTex.height = 1200;
+            screenBackTex.width = 1200;
 
             //load music
             Raylib.InitAudioDevice();
-            mainTheme = Raylib.LoadSound(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main.mp3");
-            Raylib.SetSoundVolume(mainTheme, volumeMain);
-            Raylib.PlaySound(mainTheme);
+            //mainTheme = Raylib.LoadSound(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\main (OGG).ogg");
+            elfTheme = Raylib.LoadSound(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Music\elf theme (OGG).ogg");
+            Raylib.SetSoundVolume(elfTheme, volumeMain);
+            Raylib.PlaySound(elfTheme);
 
             while (!Raylib.WindowShouldClose())
             {
@@ -60,14 +63,17 @@ namespace Gamerpg
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
                 
-                Raylib.DrawFPS(10, 10);
-                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 20, Color.BLACK);
-                Raylib.DrawText("Press N to pause the music, M to resume and B to restart the music.", 30, 70, 20, Color.BLACK);
-                Raylib.DrawText("Use the directional keys to move the character. ", 30, 90, 20, Color.BLACK);
-
                 UpdateBackground();
+
+                Raylib.DrawFPS(10, 25);
+                Raylib.DrawText("This is a rpg, based on a wood cutter main character.", 30, 50, 20, Color.WHITE);
+                Raylib.DrawText("Press N to pause the music, M to resume and B to restart the music.", 30, 70, 20, Color.WHITE);
+                Raylib.DrawText("Use the directional keys to move the character. ", 30, 90, 20, Color.WHITE);
+
+                
                 UpdateMusic();
                 UpdatePlayer();
+                UpdateSprite();
 
                 if (gameRunning == true)
                 {
@@ -78,31 +84,44 @@ namespace Gamerpg
                 Raylib.EndDrawing();
             }
 
-            Raylib.UnloadSound(mainTheme);
+            Raylib.UnloadSound(elfTheme);
             Raylib.CloseAudioDevice();
             Raylib.UnloadTexture(playerTex);
+            Raylib.UnloadTexture(screenBackTex);
 
             gameRunning = false;
             Raylib.CloseWindow();
         }
 
         private static void UpdateBackground() {
-            Raylib.DrawTexture(screenBackTex, screenBackTex.width, screenBackTex.height, Color.BLANK);
+            //scrollBack -= 0.1f;
 
+            /**
+            if (scrollBack <= -screenBackTex.width * 2)
+            {
+                scrollBack = 0;
+            }
+            **/
+
+            float yer = screenBackTex.width * 2 + scrollBack;
+            Vector2 vec = new Vector2(scrollBack, 0);
+            //Vector2 vec2 = new Vector2(yer, 0);
+            Raylib.DrawTextureEx(screenBackTex, vec, 0.0f, 1.0f, Color.WHITE);
+            //Raylib.DrawTextureEx(screenBackTex, vec2, 0.0f, 1.0f, Color.WHITE);           
         }
 
         private static void UpdateMusic() { 
             //Raylib.UpdateSound(mainTheme);
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_N) || Raylib.IsKeyDown(KeyboardKey.KEY_N) && Raylib.IsSoundPlaying(mainTheme)) {
-                Raylib.PauseSound(mainTheme);
+                Raylib.PauseSound(elfTheme);
             }
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_M) || Raylib.IsKeyDown(KeyboardKey.KEY_M) && Raylib.IsSoundPlaying(mainTheme))
             {
-                Raylib.ResumeSound(mainTheme);
+                Raylib.ResumeSound(elfTheme);
             }
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_B) || Raylib.IsKeyDown(KeyboardKey.KEY_B) && Raylib.IsSoundPlaying(mainTheme))
             {
-                Raylib.PlaySound(mainTheme);
+                Raylib.PlaySound(elfTheme);
             }
 
         }
@@ -202,16 +221,10 @@ namespace Gamerpg
                 isMovingRight = false;
                 isMoving = false;
             }
+        }
 
-            //NOT WORKING
-            /**
-            if(playerPosition.X > Raylib.GetScreenWidth()){
-                playerPosition.X -= Raylib.GetScreenWidth();
-            }
-            if (playerPosition.Y > Raylib.GetScreenHeight()) {
-                playerPosition.Y -= Raylib.GetScreenHeight();
-            }
-            **/
+        private static void UpdateSprite() { 
+            
         }
     }
 }
