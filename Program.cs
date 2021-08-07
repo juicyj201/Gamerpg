@@ -1,6 +1,8 @@
 ﻿using Raylib_cs;
+using System;
 using System.Numerics;
 using System.Resources;
+using System.Text;
 
 namespace Gamerpg
 {
@@ -15,6 +17,8 @@ namespace Gamerpg
         private static Texture2D playerTex;
         private static float playerHeight = 150;
         private static float playerWidth = 150;
+
+        private static Texture2D playerTexWalk;
 
         private static Texture2D screenBackTex;
         //private static Rectangle screenBack;
@@ -35,6 +39,9 @@ namespace Gamerpg
 
         private static int screenUpperLimit = 40;
 
+        private static float timer = 0.0f;
+        private static int frameCounter = 0;
+
         public static void Main(string[] args)
         {
             Raylib.SetTargetFPS(300);
@@ -44,6 +51,11 @@ namespace Gamerpg
             playerTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg(develop)\Game assets\Main character sprites\Woodcutter\Woodcutter.png");
             playerTex.height = 200;
             playerTex.width = 200;
+
+            //load player walk
+            playerTexWalk = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Main character sprites\Woodcutter\Woodcutter_walk.png");
+            playerTexWalk.height = 200;
+            playerTexWalk.width = 200;
 
             //load screen background
             screenBackTex = Raylib.LoadTexture(@"C:\Users\joshu\source\repos\Gamerpg\Game assets\Backgrounds\Battleground1\Pale\Battleground1.png");
@@ -70,10 +82,8 @@ namespace Gamerpg
                 Raylib.DrawText("Press N to pause the music, M to resume and B to restart the music.", 30, 70, 20, Color.WHITE);
                 Raylib.DrawText("Use the directional keys to move the character. ", 30, 90, 20, Color.WHITE);
 
-                
                 UpdateMusic();
                 UpdatePlayer();
-                UpdateSprite();
 
                 if (gameRunning == true)
                 {
@@ -87,6 +97,7 @@ namespace Gamerpg
             Raylib.UnloadSound(elfTheme);
             Raylib.CloseAudioDevice();
             Raylib.UnloadTexture(playerTex);
+            Raylib.UnloadTexture(playerTexWalk);
             Raylib.UnloadTexture(screenBackTex);
 
             gameRunning = false;
@@ -128,14 +139,30 @@ namespace Gamerpg
 
         private static void UpdatePlayer() {
             //Raylib.DrawTexture(playerTex, (int)playerPosition.X, (int)playerPosition.Y, Color.WHITE);
-            //player = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 150, 150); //player collision rectangle
             Rectangle player = new Rectangle(0.0f, 0.0f, playerTex.width, playerTex.height);
+            //Raylib.DrawTextureRec(playerTex, player, playerPosition, Color.WHITE);
+
             Raylib.DrawTextureRec(playerTex, player, playerPosition, Color.WHITE);
+
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT) ||
+                Raylib.IsKeyDown(KeyboardKey.KEY_LEFT) ||
+                Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT) ||
+                Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
+            {
+                UpdateSprite();
+            } 
+            else if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP) ||
+                Raylib.IsKeyDown(KeyboardKey.KEY_UP) ||
+                Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN) ||
+                Raylib.IsKeyDown(KeyboardKey.KEY_DOWN)) {
+                
+            }
+            
             
             //player collision detection
             if ((playerPosition.X + playerTex.width) >= Raylib.GetScreenWidth())
             {
-                playerPosition.X = Raylib.GetScreenWidth() - playerTex.width;
+                playerPosition.X = Raylib.GetScreenWidth() - playerTexWalk.width;
             }
             else if (playerPosition.X <= 0)
             {
@@ -144,7 +171,7 @@ namespace Gamerpg
 
             if ((playerPosition.Y + playerTex.height) >= Raylib.GetScreenHeight())
             {
-                playerPosition.Y = Raylib.GetScreenHeight() - playerTex.height;
+                playerPosition.Y = Raylib.GetScreenHeight() - playerTexWalk.height;
             }
             else if (playerPosition.Y <= screenUpperLimit)
             {
@@ -223,8 +250,27 @@ namespace Gamerpg
             }
         }
 
-        private static void UpdateSprite() { 
-            
+        private static void UpdateSprite() {
+            float frameWidth = (float)(playerTexWalk.width / 6);
+            int maxframes = playerTexWalk.width / (int)frameWidth;
+
+            //Rectangle player = new Rectangle(0.0f, 0.0f, playerTexWalk.width, playerTexWalk.height);
+            Rectangle stuffRec = new Rectangle(playerPosition.X, playerPosition.Y, (frameWidth + frameCounter), playerTexWalk.height);
+
+            timer += Raylib.GetFrameTime();
+            if (timer >= 0.2f)
+            {
+                timer = 0.0f;
+                frameCounter += 1;
+            }
+
+            frameCounter = frameCounter % maxframes;
+
+            //walk texture
+            Raylib.DrawTextureRec(playerTexWalk, stuffRec, playerPosition, Color.WHITE);
+
+            //string frameCounterS = Convert.ToString(frameCounter);
+            //Raylib.DrawText(frameCounterS, 0, 0, 50, Color.BLUE);
         }
     }
 }
